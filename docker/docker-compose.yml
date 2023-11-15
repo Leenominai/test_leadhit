@@ -1,0 +1,29 @@
+version: "3.11"
+services:
+  db:
+    image: "mongo"
+    container_name: test_db
+    ports:
+      - "27017:27017"
+    volumes:
+      - db_data:/data/db
+    env_file:
+      - ../backend/.env
+
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    container_name: test_backend
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    volumes:
+      - backend_data:/app
+    env_file:
+      - ../backend/.env
+
+volumes:
+  db_data:
+  backend_data:

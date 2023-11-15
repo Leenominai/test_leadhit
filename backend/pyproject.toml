@@ -1,13 +1,16 @@
 [tool.poetry]
-name = "test-leadhit"
-version = "0.1.0"
-description = ""
-authors = ["Александр Рассыхаев <farexzon@yandex.ru>"]
+name = "test"
+version = "1.0"
+description = "test"
+authors = ["Your Name <you@example.com>"]
 readme = "README.md"
-packages = [{include = "test_leadhit"}]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.11"
+pymongo = "^4.6.0"
+flask = "^3.0.0"
+python-dotenv = "^1.0.0"
+requests = "^2.31.0"
 
 
 [build-system]
