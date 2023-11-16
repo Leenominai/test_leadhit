@@ -1,33 +1,48 @@
+import json
+import os
 import re
 import logging
-from flask import Flask, request, jsonify, json
-from tinydb import TinyDB, Query
+from flask import request, jsonify, Flask
+from pymongo import MongoClient
 
-app = Flask(__name__)
-db = TinyDB('templates_db.json')
-templates_table = db.table('templates')
+
+client = MongoClient(os.environ["MONGODB_URL"])
+db_mongo = client['test_db_mongo']
+templates_collection = db_mongo['templates']
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 
+app = Flask(__name__)
+
+
 def load_templates_from_file(file_path):
-    with open(file_path, 'r', encoding='utf-8') as file:
-        templates = json.load(file)
-    return templates
+    logger.info(f"Загрузка БД из файла с шаблонами форм: {file_path}")
+    try:
+        with open(file_path, 'r', encoding='utf-8') as file:
+            templates = json.load(file)
+            logger.info(f"Загрузка БД из файла с шаблонами форм прошла успешно")
+        return templates
+    except FileNotFoundError:
+        logger.error(f"Ошибка: Файл с шаблонами {file_path} не найден")
+        return []
+    except json.JSONDecodeError:
+        logger.error(f"Ошибка декодирования JSON-файла: {file_path}")
+        return []
 
 
-def insert_templates_into_db(templates):
+def insert_templates_into_db_mongo(templates):
     for template in templates:
         # Проверка наличия данных в базе перед вставкой
-        if not templates_table.contains(Query().name == template['name']):
-            templates_table.insert(template)
+        if not templates_collection.find_one({"name": template['name']}):
+            templates_collection.insert_one(template)
 
 
 test_templates = load_templates_from_file('test_templates.json')
 # Вставка шаблонов в базу данных
-insert_templates_into_db(test_templates)
-logger.info(f"Полученная БД из файла: {test_templates}")
+insert_templates_into_db_mongo(test_templates)
+logger.info(f"Полученная БД из файла и сохраненная в MongoDB: {test_templates}")
 
 
 # Define validation functions for phone, date, and email
@@ -114,7 +129,7 @@ def get_form():
     input_data = request.form.to_dict()
     logger.info(f"Полученные данные: {input_data}")
 
-    templates = db.table('templates')
+    templates = templates_collection.find()
 
     # Логирование типизации полей
     field_types = typeify_fields(input_data)
@@ -130,5 +145,5 @@ def get_form():
         return jsonify(field_types)
 
 
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, debug=True)

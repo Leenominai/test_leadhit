@@ -10,4 +10,4 @@ RUN poetry config virtualenvs.create false && poetry install --no-dev --no-inter
 
 COPY . .
 
-CMD ["python", "app.py"]
+CMD ["python", "app_mongodb.py"]
