@@ -1,8 +1,9 @@
 import json
-import re
 import logging
-from flask import Flask, request, jsonify
-from tinydb import TinyDB, Query
+import re
+
+from flask import Flask, jsonify, request
+from tinydb import Query, TinyDB
 
 app = Flask(__name__)
 db = TinyDB("templates_db.json")
