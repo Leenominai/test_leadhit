@@ -106,9 +106,8 @@ f_name1=value1&f_name2=value2
 ```
 git clone git@github.com:Leenominai/test_leadhit.git
 ```
-- Переход в каталог репозитория
+- Переход в рабочую папку приложения
 ```
-cd test_leadhit
 cd backend
 ```
 - Настройка файлов окружения: Создайте файл окружения .env в корне вашего проекта.
@@ -128,9 +127,8 @@ docker-compose up -d
 ```
 git clone git@github.com:Leenominai/test_leadhit.git
 ```
-- Переход в каталог репозитория
+- Переход в рабочую папку и запуск приложения:
 ```
-cd test_leadhit
 cd backend
 python app_tinydb.py
 ```
