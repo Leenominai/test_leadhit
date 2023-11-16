@@ -1,8 +1,8 @@
 [tool.poetry]
-name = "test"
-version = "1.0"
-description = "test"
-authors = ["Your Name <you@example.com>"]
+name = "test_leadhit"
+version = "1.7"
+description = "Тестовый проект: Web-приложение для определения заполненных форм"
+authors = ["Рассыхаев Александр, leenominai@gmail.com, Telegram: @leenominai"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
