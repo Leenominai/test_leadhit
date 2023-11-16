@@ -7,7 +7,6 @@ app = Flask(__name__)
 db = TinyDB('templates_db.json')
 templates_table = db.table('templates')
 
-# Настройка логгера
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
