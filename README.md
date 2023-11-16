@@ -92,7 +92,6 @@ f_name1=value1&f_name2=value2
 - **PyCharm**: Интегрированная среда разработки Python.
 - **Docker**: Контейнеризация приложения и зависимостей для легкого развертывания.
 - **Postman**: Инструмент для тестирования и проверки функциональности API.
-- **Google Chrome**: Браузер для проверки работоспособности приложения.
 
 ## Локальный запуск приложения (используя Docker и MongoDB)
 
@@ -160,13 +159,20 @@ python app_tinydb.py
 Ответ системы может быть двух видов:
 - Если подходящий шаблон форм найден:
 ```
-"User contacts"
+  "User contacts"
 ```
-- Если не найден:
+- Можно изменить запрос:
+```
+    Key = user_email и Value = test@example.com
+    Key = user_phone1 и Value = +7 921 123 45 67
+    Key = user_phone2 и Value = +7 921 891 23 45
+```
+- И получить другой ответ:
 ```
 {
-    "user_email1": "email",
-    "user_phone1": "phone"
+    "user_email": "email",
+    "user_phone1": "phone",
+    "user_phone2": "phone"
 }
 ```
 
