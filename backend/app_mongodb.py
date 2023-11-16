@@ -7,8 +7,8 @@ from pymongo import MongoClient
 
 
 client = MongoClient(os.environ["MONGODB_URL"])
-db_mongo = client['test_db_mongo']
-templates_collection = db_mongo['templates']
+db_mongo = client["test_db_mongo"]
+templates_collection = db_mongo["templates"]
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -26,9 +26,9 @@ def load_templates_from_file(file_path):
     """
     logger.info(f"Загрузка БД из файла с шаблонами форм: {file_path}")
     try:
-        with open(file_path, 'r', encoding='utf-8') as file:
+        with open(file_path, "r", encoding="utf-8") as file:
             templates = json.load(file)
-            logger.info(f"Загрузка БД из файла с шаблонами форм прошла успешно")
+            logger.info("Загрузка БД из файла с шаблонами форм прошла успешно")
         return templates
     except FileNotFoundError:
         logger.error(f"Ошибка: Файл с шаблонами {file_path} не найден")
@@ -45,13 +45,15 @@ def insert_templates_into_db_mongo(templates):
     :param templates: Список словарей с шаблонами форм.
     """
     for template in templates:
-        if not templates_collection.find_one({"name": template['name']}):
+        if not templates_collection.find_one({"name": template["name"]}):
             templates_collection.insert_one(template)
 
 
-test_templates = load_templates_from_file('test_templates.json')
+test_templates = load_templates_from_file("test_templates.json")
 insert_templates_into_db_mongo(test_templates)
-logger.info(f"Полученная БД из файла и сохраненная в MongoDB: {test_templates}")
+logger.info(
+    f"Полученная БД из файла и сохраненная в MongoDB: {test_templates}"
+)
 
 
 def validate_phone(phone):
@@ -61,7 +63,7 @@ def validate_phone(phone):
     :param phone: Строка с телефонным номером.
     :return: True, если формат телефонного номера валиден, иначе False.
     """
-    phone_pattern = re.compile(r'^\+7 \d{3} \d{3} \d{2} \d{2}$')
+    phone_pattern = re.compile(r"^\+7 \d{3} \d{3} \d{2} \d{2}$")
     return bool(re.match(phone_pattern, phone))
 
 
@@ -74,8 +76,8 @@ def validate_date(date):
     :param date: Строка с датой.
     :return: True, если формат даты валиден, иначе False.
     """
-    date_pattern1 = re.compile(r'^\d{2}.\d{2}.\d{4}$')
-    date_pattern2 = re.compile(r'^\d{4}-\d{2}-\d{2}$')
+    date_pattern1 = re.compile(r"^\d{2}.\d{2}.\d{4}$")
+    date_pattern2 = re.compile(r"^\d{4}-\d{2}-\d{2}$")
     return bool(re.match(date_pattern1, date) or re.match(date_pattern2, date))
 
 
@@ -86,7 +88,9 @@ def validate_email(email):
     :param email: Строка с адресом электронной почты.
     :return: True, если формат электронной почты валиден, иначе False.
     """
-    email_pattern = re.compile(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$')
+    email_pattern = re.compile(
+        r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+    )
     return bool(re.match(email_pattern, email))
 
 
@@ -139,17 +143,15 @@ def find_matching_template(field_types, templates):
 
     :param field_types: Словарь с типами полей.
     :param templates: Список шаблонов для проверки.
-    :return: Имя найденного шаблона или None, если подходящих шаблонов не найдено.
+    :return: Имя найденного шаблона или None,
+    если подходящих шаблонов не найдено.
     """
     logger.info(f"Проверка шаблонов: данные для проверки: {field_types}")
 
     for template in templates:
         logger.info(f"Проверка шаблонов: проверяем шаблон {template}")
 
-        form_fields = [
-            (field, field_types[field])
-            for field in field_types
-        ]
+        form_fields = [(field, field_types[field]) for field in field_types]
         template_fields = [
             (field, template.get(field))
             for field in template
@@ -163,19 +165,23 @@ def find_matching_template(field_types, templates):
             (field, field_type) in template_fields
             for field, field_type in form_fields
         ):
-            logger.info(f"Проверка шаблонов: найден подходящий шаблон: {template['name']}")
-            return template['name']
+            logger.info(
+                f"Проверка шаблонов: найден подходящий шаблон: "
+                f"{template['name']}"
+            )
+            return template["name"]
 
-    logger.info(f"Проверка шаблонов: подходящих шаблонов не найдено")
+    logger.info("Проверка шаблонов: подходящих шаблонов не найдено")
     return None
 
 
-@app.route('/get_form', methods=['POST'])
+@app.route("/get_form", methods=["POST"])
 def get_form():
     """
     Обрабатывает POST-запрос, определяя соответствующий шаблон формы.
 
-    :return: JSON-ответ с именем найденного шаблона или типами полей, если шаблон не найден.
+    :return: JSON-ответ с именем найденного шаблона или типами полей,
+    если шаблон не найден.
     """
     input_data = request.form.to_dict()
     logger.info(f"Полученные данные: {input_data}")
