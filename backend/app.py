@@ -1,12 +1,34 @@
 import re
 import logging
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, json
+from tinydb import TinyDB, Query
 
 app = Flask(__name__)
+db = TinyDB('templates_db.json')
+templates_table = db.table('templates')
 
 # Настройка логгера
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
+
+
+def load_templates_from_file(file_path):
+    with open(file_path, 'r', encoding='utf-8') as file:
+        templates = json.load(file)
+    return templates
+
+
+def insert_templates_into_db(templates):
+    for template in templates:
+        # Проверка наличия данных в базе перед вставкой
+        if not templates_table.contains(Query().name == template['name']):
+            templates_table.insert(template)
+
+
+test_templates = load_templates_from_file('test_templates.json')
+# Вставка шаблонов в базу данных
+insert_templates_into_db(test_templates)
+logger.info(f"Полученная БД из файла: {test_templates}")
 
 
 # Define validation functions for phone, date, and email
@@ -55,17 +77,58 @@ def typeify_fields(input_data):
     return types
 
 
+def find_matching_template(field_types, templates):
+    logger.info(f"Проверка шаблонов: данные для проверки: {field_types}")
+
+    for template in templates:
+        logger.info(f"Проверка шаблонов: проверяем шаблон {template}")
+
+        # Создаём списки полей
+        form_fields = [
+            (field, field_types[field])
+            for field in field_types
+        ]
+        template_fields = [
+            (field, template.get(field))
+            for field in template
+            if field != "name"
+        ]
+
+        logger.info(f"Проверка шаблонов: поля формы: {form_fields}")
+        logger.info(f"Проверка шаблонов: поля шаблона: {template_fields}")
+
+        # Сравниваем списки
+        if all(
+            (field, field_type) in template_fields
+            for field, field_type in form_fields
+        ):
+            logger.info(f"Проверка шаблонов: подходящий шаблон: {template['name']}")
+            return template['name']
+
+    logger.info(f"Проверка шаблонов: подходящих шаблонов не найдено")
+    return None
+
+
 @app.route('/get_form', methods=['POST'])
 def get_form():
     # Логирование полученных данных
     input_data = request.form.to_dict()
-    logger.info(f"Received input data: {input_data}")
+    logger.info(f"Полученные данные: {input_data}")
+
+    templates = db.table('templates')
 
     # Логирование типизации полей
     field_types = typeify_fields(input_data)
-    logger.info(f"Field types: {field_types}")
+    logger.info(f"Переформатированные данные: {field_types}")
 
-    return jsonify(field_types)
+    matching_template = find_matching_template(field_types, templates)
+
+    if matching_template:
+        # Если найден соответствующий шаблон, возвращаем его имя
+        return jsonify(matching_template)
+    else:
+        # Если соответствующего шаблона нет, возвращаем типы полей
+        return jsonify(field_types)
 
 
 if __name__ == '__main__':
