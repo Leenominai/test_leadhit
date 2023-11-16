@@ -1,10 +1,10 @@
 import json
+import logging
 import os
 import re
-import logging
-from flask import request, jsonify, Flask
-from pymongo import MongoClient
 
+from flask import Flask, jsonify, request
+from pymongo import MongoClient
 
 client = MongoClient(os.environ["MONGODB_URL"])
 db_mongo = client["test_db_mongo"]

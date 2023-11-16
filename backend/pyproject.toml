@@ -12,6 +12,7 @@ flask = "^3.0.0"
 python-dotenv = "^1.0.0"
 requests = "^2.31.0"
 tinydb = "^4.8.0"
+isort = "^5.12.0"
 
 [tool.poetry.group.test.dependencies]
 pre-commit = "^3.5.0"
