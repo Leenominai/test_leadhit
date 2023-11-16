@@ -1,1 +1,0 @@
-{"templates": {"1": {"name": "User info", "user_name": "text", "order_date": "date", "lead_email": "email"}, "2": {"name": "User contacts", "user_email": "email", "user_phone": "phone"}, "3": {"name": "Letter", "publication_date": "date", "letter": "text"}}}

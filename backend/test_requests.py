@@ -18,7 +18,7 @@ test_data = [
     {"phone": "+1 (555) 123-4567", "email": "jane.smith@company.co"},
     {"custom_field": "Some text with !@#$%^&*()_+"},
     {"text_field": "A longer piece of text with multiple words"},
-    {"html_field": "<p>This is a paragraph.</p><br><p>Another paragraph.</p>"}
+    {"html_field": "<p>This is a paragraph.</p><br><p>Another paragraph.</p>"},
 ]
 
 
@@ -35,13 +35,16 @@ for data in test_data:
 
     logging.info(f"Обработанные данные: {response.content}")
 
-    if response.headers['Content-Type'] == 'application/json':
+    if response.headers["Content-Type"] == "application/json":
         try:
             result = response.json()
             logging.info(f"Окончательный вывод: {result}")
         except json.JSONDecodeError as e:
             logging.error(f"Ошибка декодирования JSON-ответа: {e}")
     else:
-        logging.error("Неподдерживаемый тип содержимого ответа. Ожидаемый: 'application/json'.")
+        logging.error(
+            "Неподдерживаемый тип содержимого ответа. "
+            "Ожидаемый: 'application/json'."
+        )
 
     logging.info("\n" + "=" * 50 + "\n")
